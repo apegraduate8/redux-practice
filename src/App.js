@@ -1,25 +1,44 @@
 import React from 'react';
-import logo from './logo.svg';
+import { useSelector, useDispatch } from 'react-redux';
+import { increment, decrement, equation, success } from './actions';
+import { sum } from './helper/equation';
 import './App.css';
 
-function App() {
+const App = () => {
+  const counter = useSelector(state => state.counter);
+  const auth = useSelector(state => state.auth);
+  const currentEquation = useSelector(state => state.equation);
+  const successCheck = useSelector(state => state.success);
+  const dispatch = useDispatch();
+
+  const dispatcher = (reducer, arg) => {
+      dispatch(reducer(arg));
+  }
+
+  const evaluate = () => {
+      if (eval(currentEquation) === counter) {
+          dispatch(success(true));
+          dispatch(equation(sum()));
+      }
+
+      return counter;
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className="App">
+          <div>
+            What is the sum of { currentEquation } ?
+          </div>
+          <div>
+              { successCheck ? <p>Great Job!</p> : '' }
+              <h1>Counter: { evaluate() }</h1>
+          </div>
+          <div className="mid">
+              <button onClick={ () => dispatcher(increment, 5) }>+</button>
+              <button onClick={ () => dispatcher(decrement, 0) }>-</button>
+              { auth ? <h3>Valuable Info: Only for logged in user</h3> : '' }
+          </div>
+      </div>
   );
 }
 
